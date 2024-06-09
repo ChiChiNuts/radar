@@ -10,12 +10,12 @@ void delay_ms(unsigned int ms)
 
 void delay_ms(unsigned int ms)
 {
-	while(ms--);
+    while (ms--);
 }
 
 void delay_us(unsigned int us)
 {
-	while(us--);
+    while (us--);
 }
 
 #endif

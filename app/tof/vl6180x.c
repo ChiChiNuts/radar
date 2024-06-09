@@ -67,55 +67,55 @@
 #define I2C_SLAVEDEVICE_ADDRESS
 #define INTERLEAVED_MODE_ENABLE
 
-
-struct add_val {
-	uint16_t addr;
-	uint8_t  val;
+struct add_val
+{
+    uint16_t addr;
+    uint8_t val;
 };
 
 static struct add_val vl6180x_init_sequence[] = {
-	{0x0207,0x01},
-	{0x0208,0x01},
-	{0x0096,0x00},
-	{0x0097,0xFD},
-	{0x00E3,0x00},
-	{0x00E4,0x04},
-	{0x00E5,0x02},
-	{0x00E6,0x01},
-	{0x00E7,0x03},
-	{0x00F5,0x02},
-	{0x00D9,0x05},
-	{0x00DB,0xCE},
-	{0x02DC,0x03},
-	{0x00DD,0xF8},
-	{0x009F,0x00},
-	{0x00A3,0x3C},
-	{0x00B7,0x00},
-	{0x00BB,0x3C},
-	{0x00B2,0x09},
-	{0x00CA,0x09},
-	{0x0198,0x01},
-	{0x01B0,0x17},
-	{0x01AD,0x00},
-	{0x00FF,0x05},
-	{0x0100,0x05},
-	{0x0199,0x05},
-	{0x01A6,0x1B},
-	{0x01AC,0x3E},
-	{0x01A7,0x1F},
-	{0x0030,0x00},
+    {0x0207,0x01},
+    {0x0208,0x01},
+    {0x0096,0x00},
+    {0x0097,0xFD},
+    {0x00E3,0x00},
+    {0x00E4,0x04},
+    {0x00E5,0x02},
+    {0x00E6,0x01},
+    {0x00E7,0x03},
+    {0x00F5,0x02},
+    {0x00D9,0x05},
+    {0x00DB,0xCE},
+    {0x02DC,0x03},
+    {0x00DD,0xF8},
+    {0x009F,0x00},
+    {0x00A3,0x3C},
+    {0x00B7,0x00},
+    {0x00BB,0x3C},
+    {0x00B2,0x09},
+    {0x00CA,0x09},
+    {0x0198,0x01},
+    {0x01B0,0x17},
+    {0x01AD,0x00},
+    {0x00FF,0x05},
+    {0x0100,0x05},
+    {0x0199,0x05},
+    {0x01A6,0x1B},
+    {0x01AC,0x3E},
+    {0x01A7,0x1F},
+    {0x0030,0x00},
 
-	{0x0011,0x10},
-	{0x010A,0x30},
-	{0x003F,0x46},
-	{0x0031,0xFF},
-	{0x0040,0x63},
-	{0x002E,0x01},
-	{0x001B,0x09},
-	{0x003E,0x31},
-	{0x0014,0x24},
+    {0x0011,0x10},
+    {0x010A,0x30},
+    {0x003F,0x46},
+    {0x0031,0xFF},
+    {0x0040,0x63},
+    {0x002E,0x01},
+    {0x001B,0x09},
+    {0x003E,0x31},
+    {0x0014,0x24},
 
-	{0x0016,0x00},
+    {0x0016,0x00},
 };
 
 /*
@@ -125,65 +125,67 @@ static struct add_val vl6180x_init_sequence[] = {
  */
 static void WriteByte(uint16_t reg, uint8_t data)
 {
-   uint8_t data_write[3];
-   data_write[0]=(reg>>8)&0xff;
-   data_write[1]=reg&0xff;
-   data_write[2]=data&0xff;
-   while(HAL_I2C_Master_Transmit(&hi2c1,VL6180x_ADDR,(uint8_t*)data_write,3,1000) != HAL_OK);
-   if (HAL_I2C_GetError(&hi2c1) != HAL_I2C_ERROR_NONE) {
-     log_e("i2c tx error!");
-   }
+    uint8_t data_write[3];
+    data_write[0] = (reg >> 8) & 0xff;
+    data_write[1] = reg & 0xff;
+    data_write[2] = data & 0xff;
+    while (HAL_I2C_Master_Transmit(&hi2c1, VL6180x_ADDR, (uint8_t*) data_write,
+                                   3, 1000) != HAL_OK);
+    if (HAL_I2C_GetError(&hi2c1) != HAL_I2C_ERROR_NONE) {
+        log_e("i2c tx error!");
+    }
 }
 
 /*
  * @brief Reading a byte from the memory of a IIC device.
  * @reg The destination memory address to be read.
  * @return The value aimed to be read.
-*/
+ */
 static uint8_t ReadByte(uint16_t reg)
 {
-	uint8_t receive_data=0;
+    uint8_t receive_data = 0;
 
-    if (HAL_I2C_Mem_Read(&hi2c1,VL6180x_ADDR,reg,
-    	     I2C_MEMADD_SIZE_16BIT, (uint8_t *)&receive_data, 1, 1000) != HAL_OK) {
-    	log_e("i2c rx error!");
+    if (HAL_I2C_Mem_Read(&hi2c1, VL6180x_ADDR, reg,
+    I2C_MEMADD_SIZE_16BIT,
+                         (uint8_t*) &receive_data, 1, 1000) != HAL_OK) {
+        log_e("i2c rx error!");
     }
 
-	return receive_data;
+    return receive_data;
 }
-
 
 /*
  *  @brief Initialize VL6180x
  */
 int VL6180X_Init(void)
 {
-     uint8_t reset;
-     int i;
+    uint8_t reset;
+    int i;
 
-     HAL_GPIO_WritePin(SHUT_GPIO_Port, SHUT_Pin, GPIO_PIN_RESET);
-     delay_ms(10);
-     HAL_GPIO_WritePin(SHUT_GPIO_Port, SHUT_Pin, GPIO_PIN_SET);
-     delay_ms(1);
-	  
-     /* check if reset*/
-	 reset = ReadByte(SYSTEM_FRESH_OUT_OF_RESET);
-	 if(reset==1) {
-		 for(i=0; i< ARRAY_SIZE(vl6180x_init_sequence); ++i) {
-	         WriteByte(vl6180x_init_sequence[i].addr, vl6180x_init_sequence[i].val);
-		 }
-	 }
+    HAL_GPIO_WritePin(SHUT_GPIO_Port, SHUT_Pin, GPIO_PIN_RESET);
+    delay_ms(10);
+    HAL_GPIO_WritePin(SHUT_GPIO_Port, SHUT_Pin, GPIO_PIN_SET);
+    delay_ms(1);
 
-	 return 0;
+    /* check if reset*/
+    reset = ReadByte(SYSTEM_FRESH_OUT_OF_RESET);
+    if (reset == 1) {
+        for (i = 0; i < ARRAY_SIZE(vl6180x_init_sequence); ++i) {
+            WriteByte(vl6180x_init_sequence[i].addr,
+                      vl6180x_init_sequence[i].val);
+        }
+    }
+
+    return 0;
 }
 /*
  * @brief Start to ranging, one-shot mode.
  */
 void VL6180x_Ranging(void)
 {
-     WriteByte(SYSRANGE_START,0x01);
+    WriteByte(SYSRANGE_START, 0x01);
 }
-  
+
 /*
  * @brief Read range result (unit:mm).
  * @return Distance result.
@@ -191,13 +193,13 @@ void VL6180x_Ranging(void)
 uint8_t VL6180_Read_Range(void)
 {
     int range;
-	range=ReadByte(RESULT_RANGE_VAL);
-	return range;
+    range = ReadByte(RESULT_RANGE_VAL);
+    return range;
 }
-  
+
 /*clear interrupt*/
 void VL6180x_Clear_Interrupt(void)
 {
-     WriteByte(SYSTEM_INTERRUPT_CLEAR,0x07);
+    WriteByte(SYSTEM_INTERRUPT_CLEAR, 0x07);
 }
 
