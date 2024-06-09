@@ -1,0 +1,6 @@
+.settings/
+radar Debug.cfg
+radar Debug.launch
+
+Debug/
+Release/
