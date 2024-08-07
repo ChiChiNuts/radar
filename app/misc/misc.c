@@ -33,12 +33,15 @@ void init_state_machine(void)
     memset(states, 0, sizeof(states));
 }
 
-int add_state(char *name, worker wkr)
+int add_state(char *name, worker wkr, state_init init)
 {
     for(int i = 0; i < MAX_SM_NUMS; ++i) {
         if (states[i].state[0] == '\0') {
             strncpy(states[i].state, name, MAX_SM_NAME_LEN);
             states[i].runner = wkr;
+            if (init != NULL) {
+                init(&states[i]);
+            }
             return 0;
         }
     }
@@ -48,7 +51,14 @@ int add_state(char *name, worker wkr)
 
 void state_machine_loop(void)
 {
-    cur_stat = cur_stat->runner(cur_stat, NULL);
+    while (1) {
+        cur_stat = cur_stat->runner(cur_stat);
+    }
+}
+
+void setup_first_state(char *name)
+{
+    CHG_STATE(cur_stat, name);
 }
 
 struct working_state* stat_lookup(char *name)

@@ -18,18 +18,23 @@ void delay_ms(unsigned int ms);
 #define MAX_SM_NUMS     4
 
 struct working_state;
-typedef struct working_state* (*worker)(struct working_state* self, void* args);
+typedef struct working_state* (*worker)(struct working_state* self);
+typedef void (*state_init)(struct working_state* state);
 
 struct working_state {
   char state[MAX_SM_NAME_LEN];
   worker runner;
+  void * args;
 };
 
-#define CHG_STATE(_c, _ns) do { (_c) = stat_lookup((_ns)); } while(0)
+#define CHG_STATE(_c, _ns) do { (_c) = stat_lookup((_ns)); \
+                                assert((_c) != NULL); \
+                              } while(0)
 
 void init_state_machine(void);
-int add_state(char *name, worker wkr);
+int add_state(char *name, worker wkr, state_init init);
 struct working_state* stat_lookup(char *name);
+void setup_first_state(char *name);
 
 void state_machine_loop(void);
 /* state machine end */
