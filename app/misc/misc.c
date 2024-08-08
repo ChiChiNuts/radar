@@ -6,7 +6,7 @@
 
 void delay_ms(unsigned int ms)
 {
-	HAL_Delay(ms);
+    HAL_Delay(ms);
 }
 
 #else
@@ -26,7 +26,7 @@ void delay_us(unsigned int us)
 /* state machine start */
 
 static struct working_state states[MAX_SM_NUMS];
-static struct working_state* cur_stat = &states[0];
+static struct working_state *cur_stat = &states[0];
 
 void init_state_machine(void)
 {
@@ -35,7 +35,7 @@ void init_state_machine(void)
 
 int add_state(char *name, worker wkr, state_init init)
 {
-    for(int i = 0; i < MAX_SM_NUMS; ++i) {
+    for (int i = 0; i < MAX_SM_NUMS; ++i) {
         if (states[i].state[0] == '\0') {
             strncpy(states[i].state, name, MAX_SM_NAME_LEN);
             states[i].runner = wkr;
@@ -63,7 +63,7 @@ void setup_first_state(char *name)
 
 struct working_state* stat_lookup(char *name)
 {
-    for(int i = 0; i < MAX_SM_NUMS; ++i) {
+    for (int i = 0; i < MAX_SM_NUMS; ++i) {
         if (strncmp(states[i].state, name, MAX_SM_NAME_LEN) == 0) {
             return &states[i];
         }
