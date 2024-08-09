@@ -4,6 +4,8 @@
 #include "gpio.h"
 #include "motor.h"
 #include "usart.h"
+#include "stdio.h"
+#include "linenoise.h"
 
 #undef LOG_TAG
 #define LOG_TAG    "app_main"
@@ -38,8 +40,13 @@ static struct working_state* idle_state(struct working_state *self)
 
 static struct working_state* cmd_state(struct working_state *self)
 {
+    char *line = NULL;
     log_i("into %s", self->state);
-    delay_ms(1000);
+//    delay_ms(1000);
+    while((line = linenoise(APPNAME"> ")) != NULL) {
+//        printf("You wrote: %s\n", line);
+        linenoiseFree(line); /* Or just free(line) if you use libc malloc. */
+    }
     CHG_STATE(self, "idle");
 
     return self;
