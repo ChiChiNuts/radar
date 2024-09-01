@@ -158,13 +158,16 @@ int app_main(void)
     log_i("commit[%s]", COMMIT);
 
     init_state_machine();
-    add_state("idle", idle_state, NULL);
-    add_state("CMD", cmd_state, cmd_state_init);
-    add_state("scan", scan_state, NULL);
+    assert(add_state("idle", idle_state, NULL) == 0);
+    assert(add_state("CMD", cmd_state, cmd_state_init) == 0);
+    assert(add_state("scan", scan_state, NULL) == 0);
+
+    assert(add_edge("idle", "CMD") == 0);
+    assert(add_edge("idle", "scan") == 0);
+    assert(add_edge("CMD", "idle") == 0);
+    assert(add_edge("scan", "idle") == 0);
 
     state_machine_loop();
 
-    while (1) {
-    };
     return 0;
 }
