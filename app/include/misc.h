@@ -16,24 +16,31 @@ void delay_ms(unsigned int ms);
 /* state machine start */
 #define MAX_SM_NAME_LEN 16
 #define MAX_SM_NUMS     4
+#define MAX_SM_EDGES_NUMS 4
 
 struct working_state;
-typedef struct working_state* (*worker)(struct working_state* self);
-typedef void (*state_init)(struct working_state* state);
+typedef struct working_state* (*worker)(struct working_state *self);
+typedef void (*state_init)(struct working_state *state);
 
-struct working_state {
-  char state[MAX_SM_NAME_LEN];
-  worker runner;
-  void * args;
+struct working_state
+{
+    char state[MAX_SM_NAME_LEN];
+    worker runner;
+    worker enter;
+    worker exit;
+    void *args;
+    uint8_t edges[MAX_SM_EDGES_NUMS];
 };
 
-#define CHG_STATE(_c, _ns) do { (_c) = stat_lookup((_ns)); \
+#define CHG_STATE(_c, _ns) do { (_c) = trans_stat((_c), (_ns)); \
                                 assert((_c) != NULL); \
                               } while(0)
 
 void init_state_machine(void);
 int add_state(char *name, worker wkr, state_init init);
+int add_edge(char *from, char *to);
 struct working_state* stat_lookup(char *name);
+struct working_state* trans_stat(struct working_state *from, char *to);
 void setup_first_state(char *name);
 
 void state_machine_loop(void);
