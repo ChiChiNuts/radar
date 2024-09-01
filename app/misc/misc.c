@@ -72,7 +72,7 @@ int add_edge(char *from, char *to)
 
 void state_machine_loop(void)
 {
-    struct working_state *prv_stat = NULL;
+    struct working_state* prv_stat = NULL;
 
     while (1) {
         if (prv_stat != cur_stat) {
