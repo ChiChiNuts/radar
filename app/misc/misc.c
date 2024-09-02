@@ -81,7 +81,7 @@ void state_machine_loop(void)
         }
         cur_stat = cur_stat->runner(cur_stat);
         if (prv_stat != cur_stat) {
-            cur_stat->exit ? cur_stat->exit(cur_stat) : NULL;
+            prv_stat->exit ? prv_stat->exit(cur_stat) : NULL;
         }
     }
 }

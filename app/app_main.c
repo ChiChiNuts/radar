@@ -32,6 +32,22 @@ static struct working_state* scan_state(struct working_state *self)
     return self;
 }
 
+static void idle_enter(struct working_state *state)
+{
+    log_i("enter %s", __func__);
+}
+
+static void idle_exit(struct working_state *state)
+{
+    log_i("exit %s", __func__);
+}
+
+static void idle_state_init(struct working_state *state)
+{
+    state->enter = idle_enter;
+    state->exit = idle_exit;
+}
+
 static struct working_state* idle_state(struct working_state *self)
 {
     char ch;
@@ -158,7 +174,7 @@ int app_main(void)
     log_i("commit[%s]", COMMIT);
 
     init_state_machine();
-    assert(add_state("idle", idle_state, NULL) == 0);
+    assert(add_state("idle", idle_state, idle_state_init) == 0);
     assert(add_state("CMD", cmd_state, cmd_state_init) == 0);
     assert(add_state("scan", scan_state, NULL) == 0);
 

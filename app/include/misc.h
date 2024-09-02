@@ -26,8 +26,8 @@ struct working_state
 {
     char state[MAX_SM_NAME_LEN];
     worker runner;
-    worker enter;
-    worker exit;
+    void (*enter)(struct working_state *);
+    void (*exit)(struct working_state *);
     void *args;
     uint8_t edges[MAX_SM_EDGES_NUMS];
 };
