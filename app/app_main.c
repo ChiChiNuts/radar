@@ -126,9 +126,55 @@ static int cmd_motor(int argc, char (*argv)[16])
     return 0;
 }
 
+#define CMD_TOF_HELP "tof - test ToF functionality\n\r" \
+    "Usage: tof [-i] [-r]\n\r" \
+    "\t-i Initialize ToF\n\r" \
+    "\t-r get distance from ToF\n\r"
+
+static int cmd_tof(int argc, char (*argv)[16])
+{
+    int opt;
+    struct optparse options;
+    static bool is_init = false;
+    bool do_read = false, do_init = false;
+    uint8_t range = 0;
+
+    UNUSED(argc);
+
+    optparse_init(&options, (char**) argv);
+    while ((opt = optparse(&options, "hir")) != -1) {
+        switch (opt) {
+            case 'i':
+                do_init = true;
+                break;
+            case 'r':
+                do_read = true;
+                break;
+            case 'h':
+                printf(CMD_TOF_HELP);
+                return 0;
+            case '?':
+                log_e("%s: %s", argv[0], options.errmsg);
+                return 0;
+        }
+    }
+
+    if (!is_init && do_init) {
+        is_init = !VL6180X_Init();
+    }
+
+    if (is_init && do_read) {
+        VL6180x_Ranging();
+        delay_ms(20);
+        range = VL6180_Read_Range();
+        log_i("range : %d", range);
+    }
+
+    return 0;
+}
+
 static void cli_handler(char *cmd)
 {
-
     char (*argv)[16];
     int argc;
 
@@ -137,6 +183,8 @@ static void cli_handler(char *cmd)
     if (argc >= 1) {
         if (!strncmp(argv[0], "motor", sizeof("motor") - 1)) {
             cmd_motor(argc, argv);
+        } else if (!strncmp(argv[0], "tof", sizeof("tof") - 1)) {
+            cmd_tof(argc, argv);
         }
     }
 
