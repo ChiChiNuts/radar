@@ -26,8 +26,8 @@ struct working_state
 {
     char state[MAX_SM_NAME_LEN];
     worker runner;
-    void (*enter)(struct working_state *);
-    void (*exit)(struct working_state *);
+    void (*enter)(struct working_state*);
+    void (*exit)(struct working_state*);
     void *args;
     uint8_t edges[MAX_SM_EDGES_NUMS];
 };
@@ -38,7 +38,7 @@ struct working_state
 
 void init_state_machine(void);
 int add_state(char *name, worker wkr, state_init init);
-int add_edge(char *from, char *to);
+int add_trans_rule(char *from, char *to);
 struct working_state* stat_lookup(char *name);
 struct working_state* trans_stat(struct working_state *from, char *to);
 void setup_first_state(char *name);

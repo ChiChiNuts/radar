@@ -50,7 +50,7 @@ int add_state(char *name, worker wkr, state_init init)
     return -1;
 }
 
-int add_edge(char *from, char *to)
+int add_trans_rule(char *from, char *to)
 {
     struct working_state *fstat, *tostat;
     int ret = -1;

@@ -178,10 +178,10 @@ int app_main(void)
     assert(add_state("CMD", cmd_state, cmd_state_init) == 0);
     assert(add_state("scan", scan_state, NULL) == 0);
 
-    assert(add_edge("idle", "CMD") == 0);
-    assert(add_edge("idle", "scan") == 0);
-    assert(add_edge("CMD", "idle") == 0);
-    assert(add_edge("scan", "idle") == 0);
+    assert(add_trans_rule("idle", "CMD") == 0);
+    assert(add_trans_rule("idle", "scan") == 0);
+    assert(add_trans_rule("CMD", "idle") == 0);
+    assert(add_trans_rule("scan", "idle") == 0);
 
     state_machine_loop();
 
