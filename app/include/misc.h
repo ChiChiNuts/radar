@@ -20,7 +20,6 @@ void delay_ms(unsigned int ms);
 
 struct working_state;
 typedef struct working_state* (*worker)(struct working_state *self);
-typedef void (*state_init)(struct working_state *state);
 
 struct working_state
 {
@@ -37,7 +36,7 @@ struct working_state
                               } while(0)
 
 void init_state_machine(void);
-int add_state(char *name, worker wkr, state_init init);
+int add_state(char *name, worker wkr, void (*init)(struct working_state *));
 int add_trans_rule(char *from, char *to);
 struct working_state* stat_lookup(char *name);
 struct working_state* trans_stat(struct working_state *from, char *to);

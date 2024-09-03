@@ -33,7 +33,7 @@ void init_state_machine(void)
     memset(states, 0, sizeof(states));
 }
 
-int add_state(char *name, worker wkr, state_init init)
+int add_state(char *name, worker wkr, void (*init)(struct working_state *))
 {
     for (int i = 0; i < MAX_SM_NUMS; ++i) {
         if (states[i].state[0] == '\0') {
