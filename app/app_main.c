@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "as5600.h"
 
 #define OPTPARSE_IMPLEMENTATION
 #define OPTPARSE_API static
@@ -25,9 +26,15 @@
 
 static struct working_state* scan_state(struct working_state *self)
 {
-    log_i("into %s", self->state);
-    delay_ms(1000);
-    CHG_STATE(self, "idle");
+    char ch;
+
+    log_i("rotary pos: %d", get_as5600_angle(0) * 360 / 4096);
+
+    if (HAL_UART_Receive(&huart1, (uint8_t*) &ch, 1, 1000) == HAL_OK) {
+        if (ch == 'I') {
+            CHG_STATE(self, "idle");
+        }
+    }
 
     return self;
 }
@@ -173,6 +180,46 @@ static int cmd_tof(int argc, char (*argv)[16])
     return 0;
 }
 
+#define CMD_RPOS_HELP "rpos - test magnetic rotary position sensor functionality\n\r" \
+    "Usage: rpos [-srp]\n\r" \
+    "\t-s get status of sensor\n\r" \
+    "\t-r get raw rotary position\n\r" \
+	"\t-p get rotary position\n\r"
+
+static int cmd_rpos(int argc, char (*argv)[16])
+{
+    int opt;
+    struct optparse options;
+
+    UNUSED(argc);
+
+    optparse_init(&options, (char**) argv);
+    while ((opt = optparse(&options, "hsrpd")) != -1) {
+        switch (opt) {
+            case 's':
+                printf("as5600 status: 0x%x\n\r", get_as5600_status());
+                return 0;
+            case 'r':
+                printf("as5600 raw pos: %d\n\r", get_as5600_angle(1) * 360 / 4096);
+                return 0;
+            case 'p':
+                printf("as5600 pos: %d\n\r", get_as5600_angle(0) * 360 / 4096);
+                return 0;
+            case 'd':
+                as5600_dump();
+                return 0;
+            case 'h':
+                printf(CMD_RPOS_HELP);
+                return 0;
+            case '?':
+                log_e("%s: %s", argv[0], options.errmsg);
+                return 0;
+        }
+    }
+
+    return 0;
+}
+
 static void cli_handler(char *cmd)
 {
     char (*argv)[16];
@@ -185,6 +232,8 @@ static void cli_handler(char *cmd)
             cmd_motor(argc, argv);
         } else if (!strncmp(argv[0], "tof", sizeof("tof") - 1)) {
             cmd_tof(argc, argv);
+        } else if (!strncmp(argv[0], "rpos", sizeof("rpos") - 1)) {
+            cmd_rpos(argc, argv);
         }
     }
 
