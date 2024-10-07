@@ -24,10 +24,18 @@
 #define COMMIT ""
 #endif
 
+static struct working_state* sub1_state(struct working_state *self)
+{
+    log_i("into %s", self->state);
+    CHG_STATE(self, "sub2");
+
+    return self;
+}
+
 static struct working_state* scan_state(struct working_state *self)
 {
     char ch;
-
+    log_i("into %s", self->state);
     log_i("rotary pos: %d", get_as5600_angle(0) * 360 / 4096);
 
     if (HAL_UART_Receive(&huart1, (uint8_t*) &ch, 1, 1000) == HAL_OK) {
@@ -200,7 +208,8 @@ static int cmd_rpos(int argc, char (*argv)[16])
                 printf("as5600 status: 0x%x\n\r", get_as5600_status());
                 return 0;
             case 'r':
-                printf("as5600 raw pos: %d\n\r", get_as5600_angle(1) * 360 / 4096);
+                printf("as5600 raw pos: %d\n\r",
+                       get_as5600_angle(1) * 360 / 4096);
                 return 0;
             case 'p':
                 printf("as5600 pos: %d\n\r", get_as5600_angle(0) * 360 / 4096);
@@ -273,12 +282,16 @@ int app_main(void)
     init_state_machine();
     assert(add_state("idle", idle_state, idle_state_init) == 0);
     assert(add_state("CMD", cmd_state, cmd_state_init) == 0);
-    assert(add_state("scan", scan_state, NULL) == 0);
+    assert(add_state("scan", NULL, NULL) == 0);
+    assert(add_substate("scan", "sub1", sub1_state, NULL) == 0);
+    assert(add_state("sub2", scan_state, NULL) == 0);
 
     assert(add_trans_rule("idle", "CMD") == 0);
     assert(add_trans_rule("idle", "scan") == 0);
     assert(add_trans_rule("CMD", "idle") == 0);
     assert(add_trans_rule("scan", "idle") == 0);
+    assert(add_trans_rule("sub1", "sub2") == 0);
+    assert(add_trans_rule("sub2", "idle") == 0);
 
     state_machine_loop();
 
