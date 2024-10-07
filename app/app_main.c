@@ -78,9 +78,8 @@ static struct working_state* idle_state(struct working_state *self)
 
 /***********************CMD start******************************/
 #define CMD_MOTOR_HELP "motor - control motor\n\r" \
-    "Usage: motor <-s/p> [-t time span] [-d direction]\n\r" \
-    "\t-s start to run motor\n\r" \
-	"\t-p pause to run motor\n\r" \
+    "Usage: motor <-s steps> <-t time span> <-d direction>\n\r" \
+    "\t-s step n times\n\r" \
 	"\t-t set motor running time span\n\r" \
 	"\t-d set motor running direction\n\r" \
 	"\t-h show help information.\n\r"
@@ -92,22 +91,15 @@ static int cmd_motor(int argc, char (*argv)[16])
 {
     int opt;
     struct optparse options;
-    bool start = false, stop = false;
+    uint32_t steps = 0;
     uint8_t direction = 0;
     int time_ms = DEFAULT_MOTOR_TIME;
 
-    UNUSED(argc);
-
     optparse_init(&options, (char**) argv);
-    while ((opt = optparse(&options, "hspd:t:")) != -1) {
+    while ((opt = optparse(&options, "hs:d:t:")) != -1) {
         switch (opt) {
             case 's':
-                start = true;
-                stop = false;
-                break;
-            case 'p':
-                start = false;
-                stop = true;
+                steps = atoi(options.optarg);
                 break;
             case 'd':
                 if (!strncmp(options.optarg, "cw", sizeof("cw") - 1)) {
@@ -128,14 +120,12 @@ static int cmd_motor(int argc, char (*argv)[16])
         }
     }
 
-    if (start) {
-        if (direction == MOTOR_DIR_CW) {
-            step_clockwise(time_ms);
-        } else if (direction == MOTOR_DIR_CCW) {
-            step_counterclockwise(time_ms);
-        }
-    } else if (stop) {
-        step_motor_stop();
+    set_motor_interval(time_ms);
+
+    if (direction == MOTOR_DIR_CW) {
+        return step_clockwise(steps);
+    } else if (direction == MOTOR_DIR_CCW) {
+        return step_counterclockwise(steps);
     }
 
     return 0;
