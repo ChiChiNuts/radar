@@ -12,6 +12,9 @@
 extern "C" {
 #endif
 
+#include "stdint.h"
+#include "stdbool.h"
+
 struct hal_param_k_v
 {
     char *key;
@@ -21,21 +24,25 @@ struct hal_param_k_v
 /*******distance module*********/
 void hal_distance_module_init(void);
 void hal_distance_module_deinit(void);
-int hal_distance_get_param(char *key, char *val);
+int hal_distance_get_param(char *key, const char **val);
 uint16_t hal_distance_ranging(void);
 /*******************************/
 
 /*********angle module**********/
 void hal_angle_module_init(void);
 void hal_angle_module_deinit(void);
-int hal_angle_get_param(char *key, char *val);
+int hal_angle_get_param(char *key, const char **val);
 uint16_t hal_angle_get(void);
 /*******************************/
 
 /*********motor module**********/
+enum motor_speed {
+    M10DPS,
+    M20DPS,
+};
 void hal_motor_module_init(enum motor_speed speed);
 void hal_motor_module_deinit(void);
-int hal_motor_get_param(char *key, char *val);
+int hal_motor_get_param(char *key, const char **val);
 void hal_motor_rotate(uint16_t units, bool is_ccw);
 /*******************************/
 
