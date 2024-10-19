@@ -10,6 +10,7 @@
 #include "vl6180x.h"
 #include "as5600.h"
 #include "motor.h"
+#include "usart.h"
 
 /*******distance module*********/
 const struct hal_param_k_v distance_params[] = {
@@ -117,5 +118,56 @@ void hal_motor_rotate(uint16_t units, bool is_ccw)
         is_ccw ? step_counterclockwise(step) : step_clockwise(step);
         step = (step == 11) ? 12 : 11;
     }
+}
+/*******************************/
+/*****communication module******/
+const struct hal_param_k_v com_params[] = {
+        { .key = "backend", .val = "uart" },
+        { .key = "speed", .val = "115200" },
+};
+struct protocol_frame
+{
+    char pad1;
+    char pad2;
+    uint8_t reserved :5;
+    uint8_t type :2;
+    uint16_t angle;
+    uint16_t distance;
+} __attribute__((__packed__));
+
+void hal_com_module_init(enum com_rate crate)
+{
+    UNUSED(crate);
+}
+void hal_com_module_deinit(void)
+{
+    ;
+}
+int hal_com_get_param(char *key, const char **val)
+{
+    int size = ARRAY_SIZE(com_params);
+    for (int i = 0; i < size; ++i) {
+        if (!strcmp(key, com_params[i].key)) {
+            *val = com_params[i].val;
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+static struct protocol_frame data = {
+        .pad1 = '#',
+        .pad2 = '?',
+};
+int hal_com_update(uint16_t distance, uint16_t angle)
+{
+    data.angle = angle;
+    data.distance = distance;
+    if (HAL_UART_Transmit(&huart1, (uint8_t*) &data, sizeof(data), 0xFFFF)
+            != HAL_OK) {
+        return -1;
+    }
+    return 0;
 }
 /*******************************/

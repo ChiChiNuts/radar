@@ -47,9 +47,13 @@ void hal_motor_rotate(uint16_t units, bool is_ccw);
 /*******************************/
 
 /*****communication module******/
+enum com_rate {
+    B9600,
+    B115200,
+};
 void hal_com_module_init(enum com_rate crate);
 void hal_com_module_deinit(void);
-int hal_com_get_param(char *key, char *val);
+int hal_com_get_param(char *key, const char **val);
 int hal_com_update(uint16_t distance, uint16_t angle);
 /*******************************/
 #ifdef __cplusplus
