@@ -114,8 +114,8 @@ int optparse_long(struct optparse *options,
  * subcommand returned by optparse_arg(). This function allows you to
  * ignore the value of optind.
  */
-OPTPARSE_API
-char *optparse_arg(struct optparse *options);
+//OPTPARSE_API
+//char *optparse_arg(struct optparse *options);
 
 /* Implementation */
 #ifdef OPTPARSE_IMPLEMENTATION
@@ -298,18 +298,18 @@ optparse(struct optparse *options, const char *optstring)
     return 0;
 }
 
-OPTPARSE_API
-char *
-optparse_arg(struct optparse *options)
-{
-    char *option = (char *)(options->argv) + options->optind * ARGV_MAXARG_LEN;
-    options->subopt = 0;
-    if (*option != '\0')
-        options->optind++;
-    else
-        return NULL;
-    return option;
-}
+//OPTPARSE_API
+//char *
+//optparse_arg(struct optparse *options)
+//{
+//    char *option = (char *)(options->argv) + options->optind * ARGV_MAXARG_LEN;
+//    options->subopt = 0;
+//    if (*option != '\0')
+//        options->optind++;
+//    else
+//        return NULL;
+//    return option;
+//}
 
 #ifdef USE_LONGOPT
 static int

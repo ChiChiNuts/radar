@@ -12,6 +12,8 @@
 extern "C" {
 #endif
 
+#include "stdint.h"
+
 void motor_init(void);
 void motor_deinit(void);
 void set_motor_interval(uint16_t ms);
