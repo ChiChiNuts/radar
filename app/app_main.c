@@ -18,12 +18,12 @@
 
 static void idle_enter(struct working_state *state)
 {
-    log_i("enter %s", __func__);
+    log_i("%s", __func__);
 }
 
 static void idle_exit(struct working_state *state)
 {
-    log_i("exit %s", __func__);
+    log_i("%s", __func__);
 }
 
 static void idle_state_init(struct working_state *state)
