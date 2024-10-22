@@ -48,6 +48,12 @@
 #else
 	#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /** __GNUC__ */
+
+#define HAND_OFF(_f)  do {  \
+      extern void _f(void);  \
+      _f();  \
+}while(0)
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -125,8 +131,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  extern int app_main(void);
-  app_main();
+  HAND_OFF(app_main);
   log_e("Never goes here!!!\n");
     /* USER CODE END WHILE */
 
