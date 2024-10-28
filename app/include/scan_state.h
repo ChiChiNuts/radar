@@ -14,8 +14,13 @@ extern "C" {
 
 #include "misc.h"
 
-struct working_state* sub1_state(struct working_state *self);
-struct working_state* scan_state(struct working_state *self);
+struct working_state* subscan_reposition(struct working_state *self);
+struct working_state* subscan_ranging(struct working_state *self);
+void subscan_ranging_init(struct working_state *state);
+struct working_state* subscan_stepping(struct working_state *self);
+void subscan_stepping_init(struct working_state *state);
+struct working_state* subscan_com(struct working_state *self);
+void subscan_com_init(struct working_state *state);
 
 #ifdef __cplusplus
 }

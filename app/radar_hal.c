@@ -123,7 +123,7 @@ void hal_motor_rotate(uint16_t units, bool is_ccw)
 /*****communication module******/
 const struct hal_param_k_v com_params[] = {
         { .key = "backend", .val = "uart" },
-        { .key = "speed", .val = "115200" },
+        { .key = "speed", .val = "B115200" },
 };
 struct protocol_frame
 {

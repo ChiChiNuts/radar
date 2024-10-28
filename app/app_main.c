@@ -15,7 +15,6 @@
 #define COMMIT ""
 #endif
 
-
 static void idle_enter(struct working_state *state)
 {
     log_i("%s", __func__);
@@ -45,7 +44,6 @@ static struct working_state* idle_state(struct working_state *self)
     return self;
 }
 
-
 int app_main(void)
 {
     log_i("radar start!");
@@ -55,15 +53,19 @@ int app_main(void)
     assert(add_state("idle", idle_state, idle_state_init) == 0);
     assert(add_state("CMD", cmd_state, cmd_state_init) == 0);
     assert(add_state("scan", NULL, NULL) == 0);
-    assert(add_substate("scan", "sub1", sub1_state, NULL) == 0);
-    assert(add_state("sub2", scan_state, NULL) == 0);
+    assert(add_substate("scan", "repos", subscan_reposition, NULL) == 0);
+    assert(add_state("ranging", subscan_ranging, subscan_ranging_init) == 0);
+    assert(add_state("stepping", subscan_stepping, subscan_stepping_init) == 0);
+    assert(add_state("com", subscan_com, subscan_com_init) == 0);
 
     assert(add_trans_rule("idle", "CMD") == 0);
     assert(add_trans_rule("idle", "scan") == 0);
     assert(add_trans_rule("CMD", "idle") == 0);
     assert(add_trans_rule("scan", "idle") == 0);
-    assert(add_trans_rule("sub1", "sub2") == 0);
-    assert(add_trans_rule("sub2", "idle") == 0);
+    assert(add_trans_rule("repos", "ranging") == 0);
+    assert(add_trans_rule("ranging", "stepping") == 0);
+    assert(add_trans_rule("stepping", "com") == 0);
+    assert(add_trans_rule("com", "ranging") == 0);
 
     state_machine_loop();
 
