@@ -1,0 +1,9 @@
+mainmenu "Radar Configuration"
+
+config RADAR
+    bool "Radar config"
+    default y
+    
+
+
+
