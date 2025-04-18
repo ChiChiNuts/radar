@@ -1,0 +1,15 @@
+menu "components"
+
+config ENABLE_FSMOMC
+    bool "using FSMOMC framework"
+    default n
+
+config ENABLE_CM_BACKTRACE
+    bool "using cm_backtrace"
+    default n
+
+config ENABLE_EASYLOGGER
+    bool "using easylogger"
+    default n
+
+endmenu

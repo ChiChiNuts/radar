@@ -8,4 +8,4 @@ include_directories(
     ${CMAKE_BINARY_DIR}/kconfig/include/generated
 )
 
-
+add_subdirectory(components)

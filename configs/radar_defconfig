@@ -1,2 +1,9 @@
-CONFIG_EXAMPLE=y
+CONFIG_RADAR=y
 
+#
+# components
+#
+CONFIG_ENABLE_FSMOMC=y
+# CONFIG_ENABLE_CM_BACKTRACE is not set
+# CONFIG_ENABLE_EASYLOGGER is not set
+# end of components
