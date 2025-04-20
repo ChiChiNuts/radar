@@ -12,4 +12,8 @@ config ENABLE_EASYLOGGER
     bool "using easylogger"
     default n
 
+config ENABLE_LINENOISE
+    bool "using linenoise"
+    default n
+
 endmenu
